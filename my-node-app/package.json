@@ -1,0 +1,11 @@
+{
+	"name": "my-simple-app",
+	"version": "1.0.0",
+	"description": "A simple app for JFrog extension testing",
+	"main": "index.js",
+	"scripts": {
+		"build": "echo 'Building my-simple-app...'"
+	},
+	"author": "Your Name",
+	"license": "ISC"
+}
