@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu, windows ]
-        node-version: [ '16', '20', '24' ]
+        node-version: [ '16', '20', '22', '24' ]
         include:
           - os: windows
             extraSkipTests: ",conan"
@@ -31,6 +31,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          # Safe here: this job only runs after a maintainer applies the 'safe to test'
+          # label (see the 'if' above), which is the trust decision this flag requires.
+          allow-unsafe-pr-checkout: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -44,6 +47,15 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
+
+      # Pinned instead of relying on the OS image's bundled Maven: ubuntu-latest's
+      # image was bumped to Maven 3.10.0, whose maven-resolver/aether jars dropped
+      # DefaultArtifactResolver's no-arg constructor, breaking the Artifactory
+      # build-info-extractor Maven plugin (NoSuchMethodError) on ubuntu only.
+      - name: Setup Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: '3.9.9'
 
       - name: Install Mono
         run: |
