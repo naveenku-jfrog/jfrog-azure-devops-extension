@@ -183,6 +183,16 @@ steps:
       jdkArchitectureOption: 'x64'
       jdkSourceOption: 'PreInstalled'
 
+  # build-info-extractor-maven3 2.43.9 fails on Maven 3.10 (NoSuchMethodError
+  # DefaultArtifactResolver.<init>), which the hosted image now ships.
+  - bash: |
+      set -e
+      MVN_VER=3.9.11
+      curl -fsSL "https://archive.apache.org/dist/maven/maven-3/${MVN_VER}/binaries/apache-maven-${MVN_VER}-bin.tar.gz" | tar -xz -C /tmp
+      echo "##vso[task.setvariable variable=M2_HOME]/tmp/apache-maven-${MVN_VER}"
+      echo "##vso[task.prependpath]/tmp/apache-maven-${MVN_VER}/bin"
+    displayName: 'Pin Maven 3.9.x'
+
   - task: JFrogMavenE2E@1
     displayName: 'Maven: resolve from Artifactory, deploy to Artifactory'
     inputs:
